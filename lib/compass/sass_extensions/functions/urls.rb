@@ -82,9 +82,9 @@ module Compass::SassExtensions::Functions::Urls
       Compass.configuration.asset_host.call(path)
     end
 
-    # Compute and append the cache buster if there is one.
+    # Rewrite the path to include the cache buster
     if buster = compute_cache_buster(path, real_path)
-      path += "?#{buster}"
+      path = buster
     end
 
     # prepend the asset host if there is one.
@@ -138,7 +138,7 @@ module Compass::SassExtensions::Functions::Urls
 
   def default_cache_buster(path, real_path)
     if File.readable?(real_path)
-      File.mtime(real_path).to_i.to_s
+      "#{path}?#{File.mtime(real_path).to_i.to_s}"
     else
       $stderr.puts "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
     end
